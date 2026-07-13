@@ -3,6 +3,7 @@ Configured database and created tables
 git initiated and code pushed
 
 # Todo
-1. Create models and Update tables to have foreign keys
-2. Use alembic migrations
+1. Fetch db details from environment variables: Skipped
+1. Create models and Update tables to have foreign keys: Done
+2. Use alembic migrations: Done
 3. Start working on routes

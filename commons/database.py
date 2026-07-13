@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 
-sql_database_url = "mysql+pymysql://root:Admin%40123@localhost:3306/macd"
+sql_database_url = "mysql+pymysql://root:Admin%%40123@localhost:3306/macd"
 # %40 represents @
 
 engine = create_engine(sql_database_url)
