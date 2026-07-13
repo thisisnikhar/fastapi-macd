@@ -1,0 +1,8 @@
+We have created the application
+Configured database and created tables
+git initiated and code pushed
+
+# Todo
+1. Create models and Update tables to have foreign keys
+2. Use alembic migrations
+3. Start working on routes

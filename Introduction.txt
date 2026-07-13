@@ -1,0 +1,39 @@
+Project: MACD
+
+We will create a FastAPI Project which includes
+1. Routing
+2. Database
+3. Authentication
+4. Authorization
+5. Unit & Integration Testing
+
+Modules
+|- Authentication
+	|- /auth
+|- Commons
+	|- database.py
+|- ci_onboarding
+	|- /cionboarding
+		|- POST /ticket (Everyone)
+		|- PUT /ticket/{ticket_number} (Admin)
+		|- GET Own tickets /ticket/{user_name} (Everyone)
+		|- GET all ticket /ticket (Admin)
+|- tech_onboarding
+	|- /techonboarding
+		|- POST /ticket (Everyone)
+		|- PUT /ticket/{ticket_number} (Admin)
+		|- GET Own tickets /ticket/{user_name} (Everyone)
+		|- GET all ticket /ticket (Admin)
+|- cluster_onboarding
+	|- /clusteronboarding
+		|- POST /ticket (Everyone)
+		|- PUT /ticket/{ticket_number} (Admin)
+		|- GET Own tickets /ticket/{user_name} (Everyone)
+		|- GET all ticket /ticket (Admin)
+
+_____________________________________________________________________________________________________________________________________________________________________________
+1. Project Location: C:\Users\nikha\OneDrive\Desktop\path-forward\FastAPI Project
+2. Virtual environment: .venv
+3. Installed FastAPI, sqlalchemy
+4. Create Database
+
