@@ -35,5 +35,6 @@ ________________________________________________________________________________
 1. Project Location: C:\Users\nikha\OneDrive\Desktop\path-forward\FastAPI Project
 2. Virtual environment: .venv
 3. Installed FastAPI, sqlalchemy
-4. Create Database
+4. Create Database: Done
+
 
