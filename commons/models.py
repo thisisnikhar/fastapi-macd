@@ -12,6 +12,12 @@ class RequestData(base):
     ticket_number = Column(String(25), primary_key=True)
     ticket_type = Column(String(25))
 
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=False
+    )
+
     ci_onboarding = relationship(
         "CIOnboardingServerData",
         back_populates="request",
@@ -24,7 +30,7 @@ class RequestData(base):
         uselist=False,
     )
 
-    user_id = relationship(
+    users = relationship(
         "Users",
         back_populates="request"
     )
