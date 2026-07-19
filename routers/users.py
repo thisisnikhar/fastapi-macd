@@ -30,8 +30,6 @@ async def create_user(db:db_dependency,user:User):
     else:
         new_id = int(max_user_id) + 1
 
-    print(user.password)
-    print("_"*29)
     new_user = Users(
         id = new_id,
         username = user.username,
@@ -39,7 +37,6 @@ async def create_user(db:db_dependency,user:User):
         email = user.email,
         role = user.role
     )
-    print("hi")
     results = db.query(Users).filter(
         or_(
             Users.username==user.username,
@@ -47,7 +44,6 @@ async def create_user(db:db_dependency,user:User):
         )
     ).first()
     data = list(results)
-    print(data)
     if len(data) == 0:
         #Add user
         db.add(new_user)
