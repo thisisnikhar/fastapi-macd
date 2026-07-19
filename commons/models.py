@@ -23,6 +23,11 @@ class RequestData(base):
         back_populates="request",
         uselist=False,
     )
+
+    user_id = relationship(
+        "Users",
+        back_populates="request"
+    )
     
 
 class CIOnboardingServerData(base):
@@ -60,4 +65,18 @@ class TechOnboardingServerData(base):
     request = relationship(
         "RequestData",
         back_populates="tech_onboarding"
+    )
+
+
+class Users(base):
+    __tablename__ = "users"
+    id = Column(Integer,autoincrement=True,index=True,primary_key=True)
+    username = Column(String(25),unique=True,index=True,nullable=False)
+    password = Column(String(100),nullable=False)
+    email = Column(String(100),index=True,unique=True,nullable=False)
+    role = Column(String(20),nullable=False)
+
+    request = relationship(
+        "RequestData",
+        back_populates="users"
     )
