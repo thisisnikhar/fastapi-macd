@@ -76,7 +76,7 @@ class TechOnboardingServerData(base):
 
 class Users(base):
     __tablename__ = "users"
-    id = Column(Integer,autoincrement=True,index=True,primary_key=True)
+    id = Column(Integer,index=True,primary_key=True)
     username = Column(String(25),unique=True,index=True,nullable=False)
     password = Column(String(100),nullable=False)
     email = Column(String(100),index=True,unique=True,nullable=False)
@@ -86,3 +86,11 @@ class Users(base):
         "RequestData",
         back_populates="users"
     )
+
+    def __repr__(self):
+        return (
+            f"Users(id={self.id}, "
+            f"username='{self.username}', "
+            f"email='{self.email}', "
+            f"role='{self.role}')"
+        )
