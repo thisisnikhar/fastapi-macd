@@ -7,5 +7,6 @@ git initiated and code pushed
 1. Create models and Update tables to have foreign keys: Done
 2. Use alembic migrations: Done
 3. Test Database Connection: Done
-4. Add authentication
-5. Start working on routes
+4. Add authentication: Done
+5. Work on JWT: To Do
+6. Start working on routes: To Do

@@ -1,8 +1,7 @@
 from sqlalchemy.orm import relationship
 
 from commons.database import base
-from sqlalchemy import Column, String, Integer, ForeignKey, and_
-from sqlalchemy.orm import relationships,foreign
+from sqlalchemy import Column, String, Integer, ForeignKey
 
 
 class RequestData(base):
