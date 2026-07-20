@@ -20,6 +20,5 @@ app.include_router(
 
 app.include_router(
     users_router,
-    prefix="/users",
     tags=["Users"]
 )

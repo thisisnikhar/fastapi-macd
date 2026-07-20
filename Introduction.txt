@@ -37,4 +37,5 @@ ________________________________________________________________________________
 3. Installed FastAPI, sqlalchemy
 4. Create Database: Done
 
-
+user_one: test1234
+user_two: test1234

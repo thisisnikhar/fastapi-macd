@@ -10,3 +10,6 @@ git initiated and code pushed
 4. Add authentication: Done
 5. Work on JWT: To Do
 6. Start working on routes: To Do
+
+
+JWT Key: bbbd584d00268f7c8064753498b237a3aaf4adb9633d4ac3e2aa3b4d22a49043
