@@ -1,0 +1,25 @@
+{
+	"ticket_type": "ci",
+	"server_data":[
+		{
+		  "ip_address": "10.10.10.11",
+		  "hostname": "hostname",
+		  "serial_number": "serialno",
+		  "operating_system": "RHEL",
+		  "os_version": "9",
+		  "cpu": 2,
+		  "memory": 12048,
+		  "hard_disk": 50
+		},
+		{
+		  "ip_address": "10.10.10.12",
+		  "hostname": "hostname",
+		  "serial_number": "serialno",
+		  "operating_system": "RHEL",
+		  "os_version": "9",
+		  "cpu": 2,
+		  "memory": 12048,
+		  "hard_disk": 50
+		}
+	]
+}

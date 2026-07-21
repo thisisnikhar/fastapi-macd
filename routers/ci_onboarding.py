@@ -38,20 +38,36 @@ async def create_request(request_data:CIOnboardingRequest,db:db_dependency,curre
     db.add(request)
     db.commit()
 
-    # Updating CIOnboardingServerData Table
-    ci_onboarding_server_data = CIOnboardingServerData(
-        id=1,
-        record_id=1,
-        ip_address=request_data.ip_address,
-        hostname=request_data.hostname,
-        serial_number = request_data.serial_number,
-        operating_system = request_data.operating_system,
-        os_version = request_data.os_version,
-        cpu = request_data.cpu,
-        memory = request_data.memory,
-        hard_disk = request_data.hard_disk
-    )
-    db.add(ci_onboarding_server_data)
+    query = select(func.max(CIOnboardingServerData.id))
+    max_id = db.execute(query).scalar()
+    if max_id is None:
+        new_id = 1
+    else:
+        new_id = int(max_id) + 1
+
+    server_data = request_data.server_data
+    print(server_data)
+    record_id = 1
+    for data in server_data:
+        data = data.model_dump() # JSON Request Data to dictionary
+
+        # Updating CIOnboardingServerData Table
+        ci_onboarding_server_data = CIOnboardingServerData(
+            id=new_id,
+            record_id=record_id,
+            ip_address=data.get("ip_address"),
+            hostname=data.get("hostname"),
+            serial_number = data.get("serial_number"),
+            operating_system = data.get("operating_system"),
+            os_version = data.get("os_version"),
+            cpu = data.get("cpu"),
+            memory = data.get("memory"),
+            hard_disk = data.get("hard_disk"),
+            request_id = ticket_number
+        )
+        db.add(ci_onboarding_server_data)
+        new_id = new_id + 1
+        record_id = record_id + 1
     db.commit()
 
     return {"ticket_id":ticket_id,"request_data":request_data}
