@@ -12,6 +12,9 @@ git initiated and code pushed
 6. Start working on routes: To Do
 7. Add request_data and server_data to the table for CI Onboarding: Done
 8. Enable multiple server records inside server_data for one CI Onboarding request: Done
+9. Added feature to fetch all the ci onboarding requests: all for admin and related for the rest users: Done
+10. Add users with another role ticket_admin and a column in request_data for status
+11. Add a feature for ticket status to be updated by only the ticket_admin
 
 
 JWT Key: bbbd584d00268f7c8064753498b237a3aaf4adb9633d4ac3e2aa3b4d22a49043
