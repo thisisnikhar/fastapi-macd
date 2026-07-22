@@ -11,7 +11,7 @@ git initiated and code pushed
 5. Work on JWT: Done
 6. Start working on routes: To Do
 7. Add request_data and server_data to the table for CI Onboarding: Done
-8. Enable multiple server records inside server_data for one CI Onboarding request: Todo
+8. Enable multiple server records inside server_data for one CI Onboarding request: Done
 
 
 JWT Key: bbbd584d00268f7c8064753498b237a3aaf4adb9633d4ac3e2aa3b4d22a49043

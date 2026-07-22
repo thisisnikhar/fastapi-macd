@@ -19,14 +19,12 @@ class RequestData(base):
 
     ci_onboarding = relationship(
         "CIOnboardingServerData",
-        back_populates="request",
-        uselist=False,
+        back_populates="request"
     )
 
     tech_onboarding = relationship(
         "TechOnboardingServerData",
-        back_populates="request",
-        uselist=False,
+        back_populates="request"
     )
 
     users = relationship(
