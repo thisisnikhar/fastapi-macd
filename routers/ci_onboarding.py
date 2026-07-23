@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from starlette import status
 
 from commons.models import RequestData
 from commons.db_dependency import db_dependency
 from commons.user_dependency import current_user_dependency
 from commons.pydantic_models import CIOnboardingRequest
-from commons.utilities import add_ci_onboarding_server_data,generate_new_ticket_id_and_ticket_number
+from commons.utilities import (add_ci_onboarding_server_data,generate_new_ticket_id_and_ticket_number,
+                               generate_ci_response_data)
 
 
 ci_onboarding_router = APIRouter()
@@ -17,32 +18,8 @@ async def get_all_ci_requests_data(db:db_dependency,current_user=current_user_de
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="This feature is applicable only for admins")
     requests = db.query(RequestData).filter(RequestData.ticket_type=="ci").all()
-    response = []
-    for req in requests:
-        server_data = []
-        for server in req.ci_onboarding:
-            server_data.append(
-                {
-                    "record_id": server.record_id,
-                    "ip_address": server.ip_address,
-                    "hostname": server.hostname,
-                    "serial_number": server.serial_number,
-                    "operating_system": server.operating_system,
-                    "os_version": server.os_version,
-                    "cpu": server.cpu,
-                    "memory": server.memory,
-                    "hard_disk": server.hard_disk
-                }
-            )
-        response.append(
-            {
-                "ticket_number": req.ticket_number,
-                "ticket_type": req.ticket_type,
-                "username": req.users.username,
-                "user_email": req.users.email,
-                "server_data": server_data
-            }
-        )
+    response = generate_ci_response_data(requests)
+
     return {"data": response}
 
 
@@ -72,31 +49,6 @@ async def get_all_ci_requests_data_current_user(db:db_dependency,
                                                 current_user=current_user_dependency):
     requests = db.query(RequestData).filter(RequestData.ticket_type=="ci",
                                             RequestData.user_id==current_user.id).all()
-    response = []
-    for req in requests:
-        server_data = []
-        for server in req.ci_onboarding:
-            server_data.append(
-                {
-                    "record_id": server.record_id,
-                    "ip_address": server.ip_address,
-                    "hostname": server.hostname,
-                    "serial_number": server.serial_number,
-                    "operating_system": server.operating_system,
-                    "os_version": server.os_version,
-                    "cpu": server.cpu,
-                    "memory": server.memory,
-                    "hard_disk": server.hard_disk
-                }
-            )
-        response.append(
-            {
-                "ticket_number": req.ticket_number,
-                "ticket_type": req.ticket_type,
-                "username": req.users.username,
-                "user_email": req.users.email,
-                "server_data": server_data
-            }
-        )
+    response = generate_ci_response_data(requests)
     return {"data": response}
 

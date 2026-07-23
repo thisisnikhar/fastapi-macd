@@ -82,3 +82,59 @@ def add_tech_onboarding_server_data(tech_data,ticket_number,db):
         db.add(tech_onboarding_server_data)
         new_id = new_id + 1
         record_id = record_id + 1
+
+
+def generate_ci_response_data(requests):
+    response = []
+    for req in requests:
+        server_data = []
+        for server in req.ci_onboarding:
+            server_data.append(
+                {
+                    "record_id": server.record_id,
+                    "ip_address": server.ip_address,
+                    "hostname": server.hostname,
+                    "serial_number": server.serial_number,
+                    "operating_system": server.operating_system,
+                    "os_version": server.os_version,
+                    "cpu": server.cpu,
+                    "memory": server.memory,
+                    "hard_disk": server.hard_disk
+                }
+            )
+        response.append(
+            {
+                "ticket_number": req.ticket_number,
+                "ticket_type": req.ticket_type,
+                "username": req.users.username,
+                "user_email": req.users.email,
+                "server_data": server_data
+            }
+        )
+    return response
+
+
+def generate_tech_response_data(requests):
+    response = []
+    for req in requests:
+        server_data = []
+        for server in req.tech_onboarding:
+            server_data.append(
+                {
+                    "record_id": server.record_id,
+                    "ip_address": server.ip_address,
+                    "tech_type": server.tech_type,
+                    "tech_name": server.tech_name,
+                    "tech_version": server.tech_version
+                }
+            )
+        response.append(
+            {
+                "ticket_number": req.ticket_number,
+                "ticket_type": req.ticket_type,
+                "username": req.users.username,
+                "user_email": req.users.email,
+                "server_data": server_data
+            }
+        )
+    return response

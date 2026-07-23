@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from commons.user_dependency import current_user_dependency
 from commons.pydantic_models import StatusUpdate
 from commons.db_dependency import db_dependency
-from commons.auth import get_current_user
 from starlette import status
 from commons.models import RequestData
 
