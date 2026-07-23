@@ -19,7 +19,6 @@ async def get_all_ci_requests_data(db:db_dependency,current_user=Depends(get_cur
     if current_user.role not in ["admin","ticket_admin"]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="This feature is applicable only for admins")
-
     requests = db.query(RequestData).filter(RequestData.ticket_type=="ci").all()
     response = []
     for req in requests:
@@ -65,7 +64,7 @@ async def create_request(request_data:CIOnboardingRequest,db:db_dependency,curre
     request = RequestData(
         ticket_id=ticket_id,
         ticket_number=ticket_number,
-        ticket_type = request_data.ticket_type,
+        ticket_type = "ci",
         user_id = current_user.id,
         status = "In Progress"
     )
@@ -139,31 +138,3 @@ async def get_all_ci_requests_data_current_user(db:db_dependency,
         )
     return {"data": response}
 
-
-@ci_onboarding_router.patch("/request/{ticket_number}",summary="Update the status of an existing ticket",status_code=status.HTTP_200_OK)
-async def update_ticket_status(request_data:StatusUpdate,
-                               db:db_dependency,
-                               ticket_number:str,
-                               current_user=Depends(get_current_user)):
-    if current_user.role != "ticket_admin":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail="This feature is applicable only for Ticket Admins")
-    ticket = db.query(RequestData).filter(
-        RequestData.ticket_number == ticket_number
-    ).first()
-    if ticket is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Ticket not found"
-        )
-
-    ticket.status = request_data.status
-    ticket.status_updated_by = current_user.username
-    db.add(ticket)
-    db.commit()
-    return {
-              "message": "Ticket status updated successfully",
-              "ticket_number": ticket_number,
-              "status": request_data.status,
-              "status_updated_by": current_user.username
-            }

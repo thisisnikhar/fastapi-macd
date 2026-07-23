@@ -27,7 +27,6 @@ class ServerData(BaseModel):
 
 
 class CIOnboardingRequest(BaseModel):
-    ticket_type: str = Literal["ci"]
     server_data: list[ServerData]
 
 
