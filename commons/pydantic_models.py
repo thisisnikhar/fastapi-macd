@@ -6,7 +6,8 @@ class User(BaseModel):
     username: str = Field(min_length=5,max_length=20)
     email: str = Field(min_length=5,max_length=100)
     password: str = Field(min_length=8,max_length=20)
-    role: Literal["user","admin"] # Only "user" and "admin" roles are allowed
+    role: Literal["user","admin","ticket_admin"]
+    # Only "user", "ticket_admin" and "admin" roles are allowed
 
 
 class Authenticate(BaseModel):
@@ -28,3 +29,7 @@ class ServerData(BaseModel):
 class CIOnboardingRequest(BaseModel):
     ticket_type: str = Literal["ci"]
     server_data: list[ServerData]
+
+
+class StatusUpdate(BaseModel):
+    status: Literal["Open","In Progress","Closed"]

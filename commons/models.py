@@ -10,6 +10,8 @@ class RequestData(base):
     ticket_id = Column(Integer, unique=True, index=True)
     ticket_number = Column(String(25), primary_key=True)
     ticket_type = Column(String(25))
+    status = Column(String(25))
+    status_updated_by = Column(String(25))
 
     user_id = Column(
         Integer,
