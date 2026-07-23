@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from commons.auth import get_current_user
+from commons.user_dependency import current_user_dependency
 from commons.pydantic_models import StatusUpdate
 from commons.db_dependency import db_dependency
 from commons.auth import get_current_user
@@ -12,7 +12,7 @@ macd_router = APIRouter()
 
 
 @macd_router.get("/")
-async def home(current_user=Depends(get_current_user)):
+async def home(current_user=current_user_dependency):
     return {"message": "This is home from MACD router"}
 
 
@@ -20,7 +20,7 @@ async def home(current_user=Depends(get_current_user)):
 async def update_ticket_status(request_data:StatusUpdate,
                                db:db_dependency,
                                ticket_number:str,
-                               current_user=Depends(get_current_user)):
+                               current_user=current_user_dependency):
     if current_user.role != "ticket_admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="This feature is applicable only for Ticket Admins")
@@ -43,3 +43,11 @@ async def update_ticket_status(request_data:StatusUpdate,
               "status": request_data.status,
               "status_updated_by": current_user.username
             }
+
+
+@macd_router.get("/request/{ticket_number}",summary="Fetch a particular ticket",status_code=status.HTTP_200_OK)
+async def get_ticket_details(ticket_number:str,
+                                db:db_dependency,
+                                current_user = current_user_dependency):
+    ticket_data = db.query(RequestData).filter()
+    return ticket_number
