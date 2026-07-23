@@ -43,3 +43,48 @@ class TechData(BaseModel):
 
 class TechOnboardingRequest(BaseModel):
     tech_data: list[TechData]
+
+
+# Defining response models
+class CIServerResponse(BaseModel):
+    record_id: int
+    ip_address: str
+    hostname: str
+    serial_number: str
+    operating_system: str
+    os_version: str
+    cpu: int
+    memory: int
+    hard_disk: int
+
+
+class CIResponse(BaseModel):
+    ticket_number: str
+    ticket_type: str
+    username: str
+    user_email: str
+    server_data: list[CIServerResponse]
+
+
+class CIResponseList(BaseModel):
+    data: list[CIResponse]
+
+
+class TechServerResponse(BaseModel):
+    record_id: int
+    ip_address: str
+    tech_type: str
+    tech_name: str
+    tech_version: str
+
+
+class TechResponse(BaseModel):
+    ticket_number: str
+    ticket_type: str
+    username: str
+    user_email: str
+    server_data: list[TechServerResponse]
+
+
+class TechResponseList(BaseModel):
+    data: list[TechResponse]
