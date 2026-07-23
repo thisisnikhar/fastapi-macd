@@ -6,6 +6,8 @@ from commons.pydantic_models import TechOnboardingRequest
 from commons.user_dependency import current_user_dependency
 from sqlalchemy import select,or_,func
 from datetime import datetime
+from commons.utilities import (add_tech_onboarding_server_data,generate_new_ticket_id_and_ticket_number,
+                               add_tech_onboarding_server_data)
 
 
 tech_onboarding_router = APIRouter()
@@ -44,15 +46,8 @@ async def get_all_tech_requests_data(db: db_dependency,current_user=current_user
 
 @tech_onboarding_router.post("/request",status_code=status.HTTP_201_CREATED)
 async def create_request(request_data:TechOnboardingRequest,db:db_dependency,current_user=current_user_dependency):
-    query = select(func.max(RequestData.ticket_id))
-    max_ticket_id = db.execute(query).scalar()
-    if max_ticket_id is None:
-        ticket_id = 1
-    else:
-        ticket_id = int(max_ticket_id) + 1
-    year = datetime.now().strftime("%y")  # 26
-    ticket_number = f"SR-{year}-{ticket_id:05d}"
-    # return request_data.ticket_type
+    ticket_id,ticket_number = generate_new_ticket_id_and_ticket_number(db)
+
     # Updating RequestData table
     request = RequestData(
         ticket_id=ticket_id,
@@ -63,31 +58,9 @@ async def create_request(request_data:TechOnboardingRequest,db:db_dependency,cur
     )
     db.add(request)
 
-    query = select(func.max(TechOnboardingServerData.id))
-    max_id = db.execute(query).scalar()
-    if max_id is None:
-        new_id = 1
-    else:
-        new_id = int(max_id) + 1
-
+    # Updating tech data
     tech_data = request_data.tech_data
-    record_id = 1
-    for data in tech_data:
-        data = data.model_dump() # JSON Request Data to dictionary
-
-        # Updating TechOnboardingServerData Table
-        tech_onboarding_server_data = TechOnboardingServerData(
-            id=new_id,
-            record_id=record_id,
-            ip_address=data.get("ip_address"),
-            tech_type=data.get("tech_type"),
-            tech_name = data.get("tech_name"),
-            tech_version = data.get("tech_version"),
-            request_id = ticket_number
-        )
-        db.add(tech_onboarding_server_data)
-        new_id = new_id + 1
-        record_id = record_id + 1
+    add_tech_onboarding_server_data(tech_data,ticket_number,db)
     db.commit()
 
     return {"ticket_id":ticket_id,"request_data":request_data}

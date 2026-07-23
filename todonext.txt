@@ -17,8 +17,8 @@ git initiated and code pushed
 11. Add a feature for ticket status to be updated by only the ticket_admin: Done
 12. Take the common routes like updating ticket status to macd.py: Done
 13. Start working on tech_onboarding
-14. Work on fetch a particular ticket details: Todo
-14. If insert fails in CIOnboardingServerData or TechOnboardingServerData -> data should not be written to any table: Done
-
+14. Work on fetch a particular ticket details: Done
+15. If insert fails in CIOnboardingServerData or TechOnboardingServerData -> data should not be written to any table: Done
+16. Feature to fetch all the requests and myrequests combined for both ci and tech onboarding request: Done
 
 JWT Key: bbbd584d00268f7c8064753498b237a3aaf4adb9633d4ac3e2aa3b4d22a49043

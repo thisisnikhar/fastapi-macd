@@ -1,14 +1,11 @@
-from datetime import datetime
-from ipaddress import ip_address
-
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from commons.models import RequestData,CIOnboardingServerData,Users
+from commons.models import RequestData
 from commons.db_dependency import db_dependency
 from commons.user_dependency import current_user_dependency
 from commons.pydantic_models import CIOnboardingRequest
-from sqlalchemy import select,or_,func
+from commons.utilities import add_ci_onboarding_server_data,generate_new_ticket_id_and_ticket_number
 
 
 ci_onboarding_router = APIRouter()
@@ -51,15 +48,7 @@ async def get_all_ci_requests_data(db:db_dependency,current_user=current_user_de
 
 @ci_onboarding_router.post("/request",status_code=status.HTTP_201_CREATED)
 async def create_request(request_data:CIOnboardingRequest,db:db_dependency,current_user=current_user_dependency):
-    query = select(func.max(RequestData.ticket_id))
-    max_ticket_id = db.execute(query).scalar()
-    if max_ticket_id is None:
-        ticket_id = 1
-    else:
-        ticket_id = int(max_ticket_id) + 1
-    year = datetime.now().strftime("%y")  # 26
-    ticket_number = f"SR-{year}-{ticket_id:05d}"
-    # return request_data.ticket_type
+    ticket_id,ticket_number = generate_new_ticket_id_and_ticket_number(db)
     # Updating RequestData table
     request = RequestData(
         ticket_id=ticket_id,
@@ -69,36 +58,10 @@ async def create_request(request_data:CIOnboardingRequest,db:db_dependency,curre
         status = "In Progress"
     )
     db.add(request)
-
-    query = select(func.max(CIOnboardingServerData.id))
-    max_id = db.execute(query).scalar()
-    if max_id is None:
-        new_id = 1
-    else:
-        new_id = int(max_id) + 1
-
+    # Updating server data
     server_data = request_data.server_data
-    record_id = 1
-    for data in server_data:
-        data = data.model_dump() # JSON Request Data to dictionary
+    add_ci_onboarding_server_data(server_data,db,ticket_number)
 
-        # Updating CIOnboardingServerData Table
-        ci_onboarding_server_data = CIOnboardingServerData(
-            id=new_id,
-            record_id=record_id,
-            ip_address=data.get("ip_address"),
-            hostname=data.get("hostname"),
-            serial_number = data.get("serial_number"),
-            operating_system = data.get("operating_system"),
-            os_version = data.get("os_version"),
-            cpu = data.get("cpu"),
-            memory = data.get("memory"),
-            hard_disk = data.get("hard_disk"),
-            request_id = ticket_number
-        )
-        db.add(ci_onboarding_server_data)
-        new_id = new_id + 1
-        record_id = record_id + 1
     db.commit()
 
     return {"ticket_id":ticket_id,"request_data":request_data}
