@@ -61,7 +61,7 @@ class TechOnboardingServerData(base):
     id = Column(Integer, index=True, primary_key=True)
     record_id = Column(Integer)
     ip_address = Column(String(80), index=True)
-    hostname = Column(String(80), index=True)
+    tech_type = Column(String(80), index=True)
     tech_name = Column(String(80),nullable=False)
     tech_version = Column(String(10),nullable=False)
 

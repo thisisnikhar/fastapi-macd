@@ -1,40 +1,33 @@
-from datetime import datetime
-from ipaddress import ip_address
-
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter,HTTPException
 from starlette import status
-
-from commons.models import RequestData,CIOnboardingServerData,Users
 from commons.db_dependency import db_dependency
+from commons.models import RequestData,TechOnboardingServerData,Users
+from commons.pydantic_models import TechOnboardingRequest
 from commons.user_dependency import current_user_dependency
-from commons.pydantic_models import CIOnboardingRequest
 from sqlalchemy import select,or_,func
+from datetime import datetime
 
 
-ci_onboarding_router = APIRouter()
+tech_onboarding_router = APIRouter()
 
 
-@ci_onboarding_router.get("/",summary="Get all the CI Onboarding Requests",status_code=status.HTTP_200_OK)
-async def get_all_ci_requests_data(db:db_dependency,current_user=current_user_dependency):
+@tech_onboarding_router.get("/",summary="Get all the Tech Onboarding Requests",status_code=status.HTTP_200_OK)
+async def get_all_tech_requests_data(db: db_dependency,current_user=current_user_dependency):
     if current_user.role not in ["admin","ticket_admin"]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="This feature is applicable only for admins")
-    requests = db.query(RequestData).filter(RequestData.ticket_type=="ci").all()
+    requests = db.query(RequestData).filter(RequestData.ticket_type == "tech").all()
     response = []
     for req in requests:
         server_data = []
-        for server in req.ci_onboarding:
+        for server in req.tech_onboarding:
             server_data.append(
                 {
                     "record_id": server.record_id,
                     "ip_address": server.ip_address,
-                    "hostname": server.hostname,
-                    "serial_number": server.serial_number,
-                    "operating_system": server.operating_system,
-                    "os_version": server.os_version,
-                    "cpu": server.cpu,
-                    "memory": server.memory,
-                    "hard_disk": server.hard_disk
+                    "tech_type": server.tech_type,
+                    "tech_name": server.tech_name,
+                    "tech_version": server.tech_version
                 }
             )
         response.append(
@@ -49,8 +42,8 @@ async def get_all_ci_requests_data(db:db_dependency,current_user=current_user_de
     return {"data": response}
 
 
-@ci_onboarding_router.post("/request",status_code=status.HTTP_201_CREATED)
-async def create_request(request_data:CIOnboardingRequest,db:db_dependency,current_user=current_user_dependency):
+@tech_onboarding_router.post("/request",status_code=status.HTTP_201_CREATED)
+async def create_request(request_data:TechOnboardingRequest,db:db_dependency,current_user=current_user_dependency):
     query = select(func.max(RequestData.ticket_id))
     max_ticket_id = db.execute(query).scalar()
     if max_ticket_id is None:
@@ -64,39 +57,35 @@ async def create_request(request_data:CIOnboardingRequest,db:db_dependency,curre
     request = RequestData(
         ticket_id=ticket_id,
         ticket_number=ticket_number,
-        ticket_type = "ci",
+        ticket_type = "tech",
         user_id = current_user.id,
         status = "In Progress"
     )
     db.add(request)
 
-    query = select(func.max(CIOnboardingServerData.id))
+    query = select(func.max(TechOnboardingServerData.id))
     max_id = db.execute(query).scalar()
     if max_id is None:
         new_id = 1
     else:
         new_id = int(max_id) + 1
 
-    server_data = request_data.server_data
+    tech_data = request_data.tech_data
     record_id = 1
-    for data in server_data:
+    for data in tech_data:
         data = data.model_dump() # JSON Request Data to dictionary
 
-        # Updating CIOnboardingServerData Table
-        ci_onboarding_server_data = CIOnboardingServerData(
+        # Updating TechOnboardingServerData Table
+        tech_onboarding_server_data = TechOnboardingServerData(
             id=new_id,
             record_id=record_id,
             ip_address=data.get("ip_address"),
-            hostname=data.get("hostname"),
-            serial_number = data.get("serial_number"),
-            operating_system = data.get("operating_system"),
-            os_version = data.get("os_version"),
-            cpu = data.get("cpu"),
-            memory = data.get("memory"),
-            hard_disk = data.get("hard_disk"),
+            tech_type=data.get("tech_type"),
+            tech_name = data.get("tech_name"),
+            tech_version = data.get("tech_version"),
             request_id = ticket_number
         )
-        db.add(ci_onboarding_server_data)
+        db.add(tech_onboarding_server_data)
         new_id = new_id + 1
         record_id = record_id + 1
     db.commit()
@@ -104,26 +93,21 @@ async def create_request(request_data:CIOnboardingRequest,db:db_dependency,curre
     return {"ticket_id":ticket_id,"request_data":request_data}
 
 
-@ci_onboarding_router.get("/my-requests",summary="Get the CI Onboarding Requests for the current user",status_code=status.HTTP_200_OK)
-async def get_all_ci_requests_data_current_user(db:db_dependency,
+@tech_onboarding_router.get("/my-requests",summary="Get the Tech Onboarding Requests for the current user",status_code=status.HTTP_200_OK)
+async def get_all_tech_requests_data_current_user(db:db_dependency,
                                                 current_user=current_user_dependency):
-    requests = db.query(RequestData).filter(RequestData.ticket_type=="ci",
+    requests = db.query(RequestData).filter(RequestData.ticket_type=="tech",
                                             RequestData.user_id==current_user.id).all()
     response = []
     for req in requests:
-        server_data = []
-        for server in req.ci_onboarding:
-            server_data.append(
+        tech_data = []
+        for server in req.tech_onboarding:
+            tech_data.append(
                 {
                     "record_id": server.record_id,
                     "ip_address": server.ip_address,
-                    "hostname": server.hostname,
-                    "serial_number": server.serial_number,
-                    "operating_system": server.operating_system,
-                    "os_version": server.os_version,
-                    "cpu": server.cpu,
-                    "memory": server.memory,
-                    "hard_disk": server.hard_disk
+                    "tech_name": server.tech_name,
+                    "tech_version": server.tech_version
                 }
             )
         response.append(
@@ -132,8 +116,7 @@ async def get_all_ci_requests_data_current_user(db:db_dependency,
                 "ticket_type": req.ticket_type,
                 "username": req.users.username,
                 "user_email": req.users.email,
-                "server_data": server_data
+                "tech_data": tech_data
             }
         )
     return {"data": response}
-

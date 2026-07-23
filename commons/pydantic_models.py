@@ -32,3 +32,14 @@ class CIOnboardingRequest(BaseModel):
 
 class StatusUpdate(BaseModel):
     status: Literal["Open","In Progress","Closed"]
+
+
+class TechData(BaseModel):
+    ip_address: str = Field(min_length=7,max_length=80)
+    tech_type: Literal["Database", "Middleware"]
+    tech_name: str = Field(min_length=3,max_length=30)
+    tech_version: str = Field(min_length=1,max_length=15)
+
+
+class TechOnboardingRequest(BaseModel):
+    tech_data: list[TechData]
