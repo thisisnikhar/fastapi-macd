@@ -10,7 +10,7 @@ macd_router = APIRouter()
 
 
 
-@macd_router.get("/")
+@macd_router.get("/",status_code=status.HTTP_200_OK)
 async def home(current_user=current_user_dependency):
     return {"message": "This is home from MACD router"}
 
