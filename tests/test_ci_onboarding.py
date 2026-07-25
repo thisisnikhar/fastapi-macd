@@ -126,3 +126,35 @@ def test_get_all_ci_requests_data_current_user(client,auth_headers):
     assert server_data["hard_disk"] == 1
 
     assert len(data["data"]) == 1
+
+
+def test_get_all_ci_requests_data_negative(client,auth_headers):
+    # creating a ticket
+    client.post(
+        "/cionboarding/request",
+        headers=auth_headers,
+        json={
+            "server_data": [
+                {
+                    "ip_address": "10.10.10.10",
+                    "hostname": "string",
+                    "serial_number": "string",
+                    "operating_system": "string",
+                    "os_version": "string",
+                    "cpu": 1,
+                    "memory": 1,
+                    "hard_disk": 1
+                }
+            ]
+        }
+    )
+
+    # getting the tickets
+    response = client.get(
+        "/cionboarding/",
+        headers=auth_headers,
+    )
+    data = response.json()
+    assert data["detail"] == "This feature is applicable only for admins"
+    assert response.status_code == 403
+

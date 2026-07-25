@@ -41,7 +41,7 @@ async def get_all_usernames(db:db_dependency,current_user=Depends(get_current_us
         )
 
 
-@users_router.post("/",summary="Create a user")
+@users_router.post("/",summary="Create a user",status_code=status.HTTP_201_CREATED)
 async def create_user(db:db_dependency,user:User,current_user=Depends(get_current_user)):
     if current_user.role != "admin":
         raise HTTPException(
