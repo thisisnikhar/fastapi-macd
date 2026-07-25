@@ -3,7 +3,7 @@ Configured database and created tables
 git initiated and code pushed
 
 # Todo
-1. Fetch db details from environment variables: Skipped
+1. Fetch db details from environment variables: #Todo
 1. Create models and Update tables to have foreign keys: Done
 2. Use alembic migrations: Done
 3. Test Database Connection: Done
@@ -28,6 +28,7 @@ git initiated and code pushed
     |- users.py: Done
     |- ci_onboarding.py: Done
     |- tech_onboarding.py: Done
-20. Write a readme file
+20. Write a readme file: Done
+
 
 JWT Key: bbbd584d00268f7c8064753498b237a3aaf4adb9633d4ac3e2aa3b4d22a49043
