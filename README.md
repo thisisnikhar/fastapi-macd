@@ -143,9 +143,9 @@ Database migrations are managed using **Alembic**.
 ## Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/<repository-name>.git
+https://github.com/thisisnikhar/fastapi-macd.git
 
-cd <repository-name>
+cd fastapi-macd
 ```
 
 ---
