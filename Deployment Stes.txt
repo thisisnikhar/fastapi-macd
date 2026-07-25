@@ -1,0 +1,148 @@
+1. Create azure VM
+2. SSH into it from terminal
+3. Installed git into it
+4. Installed Python and other tools like pip
+5. Installed MySQL-server
+6. Started mysqlserver wqith systemctl
+7. Installed Nginx (sudo apt install)
+8. Enable nginx with systemctl
+10. cloned the project from git: git clone https://github.com/thisisnikhar/fastapi-macd.git
+11. Go into project directory and create a virtual environemnt: python3 -m venv venv
+12. Activate it: source venv/bin/activate
+13. Install dependencies:
+pip install --upgrade pip
+pip install -r requirements.txt
+14. pip install python-dotenv
+15. Create .venv: vi .env
+vi .env
+
+DATABASE_URL=mysql+pymysql://macd_user:AdMiN010@localhost/macd
+SECRET_KEY=-[w_&kPuQL7oVRJn
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=120
+
+16. 
+fetch database url and autg details from .env file
+commons/databases.py
+------------------
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/users/login")
+
+bcrypt_context = CryptContext(schemes=['bcrypt'],deprecated="auto")
+
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+
+17. Create database
+CREATE DATABASE macd;
+
+CREATE USER 'macd_user'@'localhost'
+IDENTIFIED BY 'AdMiN010';
+
+GRANT ALL PRIVILEGES
+ON macd.*
+TO 'macd_user'@'localhost';
+
+FLUSH PRIVILEGES;
+
+17. Create database
+
+mysql> CREATE DATABASE macd;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> CREATE USER 'macd_user'@'localhost' IDENTIFIED BY 'AdMiN010';
+Query OK, 0 rows affected (0.01 sec)
+
+GRANT ALL PRIVILEGES ON macd.* TO 'macd_user'@'localhost';
+
+18. load db details in alembic/env.py
+
+from dotenv import load_dotenv
+import os
+
+config = context.config
+load_dotenv()
+config.set_main_option(
+    "sqlalchemy.url",
+    os.getenv("DATABASE_URL")
+)
+
+19. run the migration
+alembic upgrade head
+
+20. Edit nginx config
+sudo nano /etc/nginx/sites-available/default
+Delete everythin and add this
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+21.c reate inbound create role on aazure vm for any
+
+21. Reload nginx
+sudo systemctl reload nginx 
+
+22. use nginx as reverse procy so that it does not exposes the IP address
+
+
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+23. create a systemd service
+sudo nano /etc/systemd/system/fastapi.service
+
+[Unit]
+Description=FastAPI Uvicorn Service
+After=network.target
+
+[Service]
+User=azureuser
+Group=azureuser
+
+WorkingDirectory=/home/azureuser/fastapi-macd
+
+Environment="PATH=/home/azureuser/fastapi-macd/venv/bin"
+
+ExecStart=/home/azureuser/fastapi-macd/venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000
+
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+
+24. Reload systemd
+sudo systemctl daemon-reload
+
+25. Start the service
+sudo systemctl start fastapi
