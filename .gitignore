@@ -1,0 +1,6 @@
+__pycache__/
+alembic/
+.idea/
+credentials.txt
+todonext.txt
+*.pyc
