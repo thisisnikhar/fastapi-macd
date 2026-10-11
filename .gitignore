@@ -4,3 +4,4 @@ alembic/
 credentials.txt
 todonext.txt
 *.pyc
+local.env
