@@ -258,4 +258,4 @@ For production deployments, configure strong secrets, validate authorization rul
 
 Backend Developer
 
-**Technologies:** Python, FastAPI, Flask, Django, Core Java, SQLAlchemy, MySQL, AWS, REST APIs, Docker
+**Technologies:** Python, FastAPI, SQLAlchemy, MySQL, REST APIs, Docker
